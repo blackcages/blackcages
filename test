@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+        }
+        .square {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .black {
+            background-color: #769656;
+        }
+        .white {
+            background-color: #eeeed2;
+        }
+        .piece {
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board">
+        <!-- Chessboard squares -->
+        <!-- Rows 1-8 -->
+        <div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div>
+        <div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div>
+        <div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div>
+        <div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div>
+        <div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div>
+        <div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div>
+        <div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div>
+        <div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div><div class="square black"></div><div class="square white"></div>
+    </div>
+
+    <script>
+        const board = document.getElementById('board');
+        let selectedPiece = null;
+        let turn = 'white';
+
+        // Initialize the chessboard with pieces
+        const pieces = [
+            '♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜',
+            '♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟',
+            '', '', '', '', '', '', '', '',
+            '', '', '', '', '', '', '', '',
+            '', '', '', '', '', '', '', '',
+            '', '', '', '', '', '', '', '',
+            '♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙',
+            '♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'
+        ];
+
+        for (let i = 0; i < pieces.length; i++) {
+            const piece = pieces[i];
+            const square = document.createElement('div');
+            square.classList.add('square');
+            square.classList.add((i + Math.floor(i / 8)) % 2 === 0 ? 'white' : 'black');
+            square.innerHTML = piece ? `<span class="piece">${piece}</span>` : '';
+            square.addEventListener('click', () => handleSquareClick(square));
+            board.appendChild(square);
+        }
+
+        function handleSquareClick(square) {
+            if (!selectedPiece) {
+                if (!square.textContent || (square.textContent && square.textContent.toLowerCase() !== turn)) return;
+                selectedPiece = square;
+                square.classList.add('selected');
+            } else {
+                if (square === selectedPiece) {
+                    selectedPiece.classList.remove('selected');
+                    selectedPiece = null;
+                    return;
+                }
+                if (square.textContent && square.textContent.toLowerCase() === turn) {
+                    selectedPiece.classList.remove('selected');
+                    selectedPiece = square;
+                    square.classList.add('selected');
+                    return;
+                }
+                movePiece(square);
+            }
+        }
+
+        function movePiece(square) {
+            square.innerHTML = selectedPiece.innerHTML;
+            selectedPiece.innerHTML = '';
+            selectedPiece.classList.remove('selected');
+            selectedPiece = null;
+            switchTurn();
+        }
+
+        function switchTurn() {
+            turn = turn === 'white' ? 'black' : 'white';
+        }
+    </script>
+</body>
+</html>
