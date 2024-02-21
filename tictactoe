@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caro Game</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, 40px);
+            grid-template-rows: repeat(5, 40px);
+            gap: 2px;
+            border: 1px solid black;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: #eee;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board"></div>
+    <script>
+        const board = document.getElementById('board');
+        let currentPlayer = 'X';
+        let gameOver = false;
+
+        // Create the grid
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 5; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                cell.addEventListener('click', () => cellClicked(cell));
+                board.appendChild(cell);
+            }
+        }
+
+        // Function to handle cell clicks
+        function cellClicked(cell) {
+            if (gameOver || cell.textContent !== '') return;
+
+            cell.textContent = currentPlayer;
+            if (checkWinner(cell.dataset.row, cell.dataset.col)) {
+                gameOver = true;
+                alert(currentPlayer + ' wins!');
+                return;
+            }
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+
+        // Function to check for a winner
+        function checkWinner(row, col) {
+            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
+            for (const [dx, dy] of directions) {
+                let count = 1;
+                for (let step = 1; step < 5; step++) {
+                    const newRow = parseInt(row) + step * dx;
+                    const newCol = parseInt(col) + step * dy;
+                    if (newRow < 0 || newRow >= 5 || newCol < 0 || newCol >= 5 || board.querySelector(`[data-row="${newRow}"][data-col="${newCol}"]`).textContent !== currentPlayer) {
+                        break;
+                    }
+                    count++;
+                }
+                for (let step = 1; step < 5; step++) {
+                    const newRow = parseInt(row) - step * dx;
+                    const newCol = parseInt(col) - step * dy;
+                    if (newRow < 0 || newRow >= 5 || newCol < 0 || newCol >= 5 || board.querySelector(`[data-row="${newRow}"][data-col="${newCol}"]`).textContent !== currentPlayer) {
+                        break;
+                    }
+                    count++;
+                }
+                if (count >= 5) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>
